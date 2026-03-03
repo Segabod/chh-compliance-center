@@ -1,0 +1,67 @@
+# render.yaml — One-click deploy to Render
+# Deploy at: https://render.com/deploy
+# Docs: https://render.com/docs/render-yaml
+
+services:
+  # ── Backend: FastAPI ──────────────────────────────────────────────────────
+  - type: web
+    name: chh-compliance-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ADMIN_USERNAME
+        sync: false           # Set in Render dashboard
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true   # Render generates a random value
+      - key: EMAIL_PROVIDER
+        value: sendgrid
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        value: compliance@chh.com.ng
+      - key: FROM_NAME
+        value: CHH Compliance Intelligence Center
+      - key: ALWAYS_CC
+        value: cto@chh.com.ng
+      - key: DEPT_FINANCE
+        value: cfo@chh.com.ng
+      - key: DEPT_UW
+        value: chief.underwriter@chi.com.ng
+      - key: DEPT_IT
+        value: cto@chh.com.ng
+      - key: DEPT_LEGAL
+        value: company.secretary@chh.com.ng
+      - key: DEPT_CLAIMS
+        value: head.claims@chh.com.ng
+      - key: DEPT_OPS
+        value: coo@chh.com.ng
+      - key: DB_PATH
+        value: /data/compliance.db
+      - key: ALLOWED_ORIGINS
+        sync: false           # Set to your frontend URL after deploy
+    disk:
+      name: compliance-db
+      mountPath: /data        # Persistent disk so DB survives redeploys
+      sizeGB: 1               # 1 GB — free on Render paid, use SQLite here
+    plan: free
+
+  # ── Frontend: Static Site ─────────────────────────────────────────────────
+  - type: static
+    name: chh-compliance-dashboard
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: chh-compliance-api
+          property: url            # Auto-injects backend URL into frontend build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html   # SPA routing
