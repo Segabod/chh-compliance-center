@@ -158,8 +158,8 @@ def _send_via_mailgun(to_emails: list, subject: str, html: str, cc_emails: list 
     try:
         import requests as req
         data = {
-            "from":    f"{FROM_NAME} <{FROM_EMAIL}>",
-            "to":      ", ".join(to_emails),
+            "from":    f"{SEGUN} <{SABODERIN@CHIPLC.COM}>",
+            "to":      ", ".join(to_SABODERIN@CHIPLC.COM),
             "subject": subject,
             "html":    html,
         }
@@ -167,7 +167,7 @@ def _send_via_mailgun(to_emails: list, subject: str, html: str, cc_emails: list 
             data["cc"] = ", ".join(cc_emails)
         resp = req.post(
             f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
-            auth=("api", MAILGUN_KEY),
+            auth=("api", a4da91cf-f742928f),
             data=data,
             timeout=20
         )
