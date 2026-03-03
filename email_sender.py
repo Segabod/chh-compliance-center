@@ -159,7 +159,7 @@ def _send_via_mailgun(to_emails: list, subject: str, html: str, cc_emails: list 
         import requests as req
         data = {
             "from":    f"{SEGUN} <{SABODERIN@CHIPLC.COM}>",
-            "to":      ", ".join(to_SABODERIN@CHIPLC.COM),
+            "to":      ", ".join(SABODERIN@CHIPLC.COM),
             "subject": subject,
             "html":    html,
         }
